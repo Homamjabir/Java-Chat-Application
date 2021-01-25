@@ -1,3 +1,12 @@
+/**
+ * Author: Homam Jabir
+ *
+ * Description: The following class creates a new chat client object
+ * which handles sending both initials messages like asking for a
+ * registraion or login and the latter stage of sending
+ *
+ */
+
 package server;
 
 import java.io.*;
@@ -17,10 +26,9 @@ public class ChatClient implements Runnable {
     /**
      * Constructor.
      */
-    ChatClient(Socket socket, Lobby lobby, ClientData clientData) {
+    ChatClient(Socket socket, MessageHandler messageHandler) {
         this.socket = socket;
-
-        this.messageHandler = new MessageHandler(this, lobby, clientData);
+        this.messageHandler = messageHandler;
 
         try {
             InputStream input = socket.getInputStream();
@@ -28,15 +36,10 @@ public class ChatClient implements Runnable {
             this.outdata = new PrintStream(socket.getOutputStream());
 
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Returns the username and password from the client.
-     * @return Username and password in the form of a string array.
-     * @throws IOException
-     */
     private String[] getUserData() throws IOException
     {
         String[] arr = new String[2];
@@ -48,6 +51,7 @@ public class ChatClient implements Runnable {
     }
 
     public void run() {
+        String response;
         try {
             this.outdata.println("You have now entered the server!");
             while (!this.isLoggedIn)
@@ -58,13 +62,13 @@ public class ChatClient implements Runnable {
                 {
                     case "1" -> {
                         userData = getUserData();
-                        if (messageHandler.registerRequest(userData[0], userData[1]))
-                            this.isLoggedIn = true;
+                        response = messageHandler.registerRequest(this, userData[0], userData[1]);
+                        this.outdata.println(response);
                     }
                     case "2" -> {
                         userData = getUserData();
-                        if (messageHandler.loginRequest(userData[0], userData[1]))
-                            this.isLoggedIn = true;
+                        response = messageHandler.loginRequest(this, userData[0], userData[1]);
+                        this.outdata.println(response);
                     }
                 }
             }
@@ -78,7 +82,7 @@ public class ChatClient implements Runnable {
 
             while (true) {
                 message = this.indata.readLine();
-                messageHandler.sendMessage(message);
+                messageHandler.sendMessage(this, message);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,13 +109,14 @@ public class ChatClient implements Runnable {
         return this.chatRoom;
     }
 
-    /*void setIsLoggedIn(Boolean isLoggedIn) {
+    void setIsLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
     }
 
     Boolean getIsLoggedIn() {
         return this.isLoggedIn;
-    }*/
+    }
+
 
     void sendMessage(String message) {
         this.outdata.println(message);
