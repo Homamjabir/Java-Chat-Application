@@ -1,5 +1,7 @@
 package server;
 
+import java.io.IOException;
+
 public class MessageHandler
 {
     private final Lobby lobby;
@@ -11,7 +13,7 @@ public class MessageHandler
         this.clientData = clientData;
         this.lobby = lobby;
         this.commands = new Commands();
-        this.commandHandler = new CommandHandler(lobby);
+        this.commandHandler = new CommandHandler(lobby, clientData);
     }
 
     String registerRequest(ChatClient chatClient, String username, String password) {
@@ -32,7 +34,8 @@ public class MessageHandler
         }
     }
 
-    void sendMessage(ChatClient chatClient, String message) {
+    void sendMessage(ChatClient chatClient, String message) throws IOException
+    {
 
         String response;
 

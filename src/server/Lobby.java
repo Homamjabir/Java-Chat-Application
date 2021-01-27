@@ -60,6 +60,10 @@ public class Lobby {
         return null;
     }
 
+    public void removeFromChatRoom(ChatClient chatClient) {
+        chatClient.getChatRoom().removeFromRoom(chatClient);
+    }
+
     private void printLobbys() {
         for(ChatRoom c : this.chatRooms)
             System.out.println("Chatroom name: " + c.getChatRoomName());

@@ -1,32 +1,30 @@
 package server;
 
+import java.io.IOException;
+
 public class CommandHandler {
 
+    private final ClientData clientData;
     private final Commands commands;
     private final Lobby lobby;
 
-    CommandHandler(Lobby lobby) {
+    CommandHandler(Lobby lobby, ClientData clientData) {
+        this.clientData = clientData;
         this.commands = new Commands();
         this.lobby = lobby;
     }
 
-    public String commandExecution(String message, ChatClient chatClient) {
+    public String commandExecution(String message, ChatClient chatClient) throws IOException
+    {
         String clientMessage = commands.extractMessage(message);
         String response = null;
-        switch (commands.whichCommand(message)) {
-            case "-h":
-                response = helpRequest();
-                break;
-            case "-c":
-                response = createRequest(chatClient, clientMessage);
-                break;
-            case "-j":
-                response = joinRequest(chatClient, clientMessage);
-            case "-f":
-                fileRequest();
-            case "-q":
-                quitRequest(chatClient);
-                break;
+        switch (commands.whichCommand(message))
+        {
+            case "-h" -> response = helpRequest();
+            case "-c" -> response = createRequest(chatClient, clientMessage);
+            case "-j" -> response = joinRequest(chatClient, clientMessage);
+            case "-f" -> fileRequest();
+            case "-q" -> quitRequest(chatClient);
         }
         return response;
     }
@@ -57,8 +55,12 @@ public class CommandHandler {
 
     }
 
-    private void quitRequest(ChatClient chatClient) {
-        chatClient.outdata.println("Hejsan");
+    private void quitRequest(ChatClient chatClient) throws IOException
+    {
+        this.lobby.removeFromChatRoom(chatClient);
+        this.clientData.logoutChatClient(chatClient);
+        chatClient.socket.close();
+
 
     }
 

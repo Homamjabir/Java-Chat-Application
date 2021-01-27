@@ -82,6 +82,7 @@ public class ChatClient implements Runnable {
 
             while (true) {
                 message = this.indata.readLine();
+
                 messageHandler.sendMessage(this, message);
             }
         } catch (IOException e) {

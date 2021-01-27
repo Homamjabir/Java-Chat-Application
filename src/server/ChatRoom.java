@@ -16,6 +16,10 @@ public class ChatRoom {
         clientsInLobby.add(chatClient);
     }
 
+    void removeFromRoom(ChatClient chatClient) {
+        this.clientsInLobby.remove(chatClient);
+    }
+
     ArrayList<ChatClient> getChatRoomClientsList() {
         return this.clientsInLobby;
     }

@@ -16,7 +16,7 @@ public class Sender implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run()  {
         try {
             PrintStream outdata = new PrintStream(this.socket.getOutputStream());
             BufferedReader indata = new BufferedReader(new InputStreamReader((System.in)));
@@ -26,13 +26,24 @@ public class Sender implements Runnable {
 
             while(true) {
                 message = indata.readLine();
-
+                if(message.equals("-q"))
+                    exit();
                 outdata.println(message);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+    private void exit() throws InterruptedException, IOException {
+
+        this.client.setLoggedIn(false);
+        Thread.sleep(500);
+        this.socket.close();
+        System.exit(0);
+
+    }
+
 
 
 
