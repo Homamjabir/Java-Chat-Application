@@ -1,3 +1,7 @@
+/**
+ * Checks if client entered in a command and handles it accordingly
+ */
+
 package server.commands;
 
 import server.lobbys.ChatClient;
@@ -14,6 +18,11 @@ public class CommandHandler {
     private final Commands commands;
     private final Lobby lobby;
 
+    /**
+     * Constructor
+     * @param lobby
+     * @param clientData
+     */
     public CommandHandler(Lobby lobby, ClientData clientData) {
         this.clientData = clientData;
         this.commands = new Commands();
@@ -21,6 +30,13 @@ public class CommandHandler {
 
     }
 
+    /**
+     * Checks if the sent client message contains a command
+     * @param message Client message
+     * @param chatClient Client that sent it
+     * @return
+     * @throws IOException
+     */
     public String commandExecution(String message, ChatClient chatClient) throws IOException
     {
         String clientMessage = commands.extractMessage(message);
@@ -70,7 +86,8 @@ public class CommandHandler {
     private void quitRequest(ChatClient chatClient) throws IOException {
         this.lobby.removeFromChatRoom(chatClient);
         this.clientData.logoutChatClient(chatClient);
-        chatClient.socket.close();
+
+        //chatClient.socket.close();
 
     }
 

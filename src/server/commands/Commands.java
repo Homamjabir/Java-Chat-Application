@@ -1,20 +1,24 @@
+/**
+ * Class that handles all commands in the server
+ */
+
 package server.commands;
 
 import java.util.ArrayList;
 
 public class Commands {
 
+    ArrayList<String[]> commands;
+
     /**
      * Constructor
      */
-    ArrayList<String[]> commands;
-
     public Commands() {
         this.commands = new ArrayList<>();
         this.commands.add(new String[]{"-h", "The following command displays all the available commands. Example -h"});
         this.commands.add(new String[]{"-c", "The following command lets the user create and join a lobby. Example -c chatroom1"});
         this.commands.add(new String[]{"-j", "The following command lets the user join the specified lobby. Example -j chatroom1"});
-        this.commands.add(new String[]{"-f", "The following command lets the user send a file. Example -f text.txt"});
+        this.commands.add(new String[]{"-f", "The following command lets the user send a file. Example -f"});
         this.commands.add(new String[]{"-q", "The following command exits the user from the application. Example -q"});
     }
 

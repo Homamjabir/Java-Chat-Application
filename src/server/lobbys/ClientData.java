@@ -1,13 +1,9 @@
-/*
- * Author: Homam Jabir
- *
+/**
  * Handles the registration/login, storage of user credentials and logout
  * of all the server clients.
  */
 
 package server.lobbys;
-
-import server.lobbys.ChatClient;
 
 import java.util.ArrayList;
 

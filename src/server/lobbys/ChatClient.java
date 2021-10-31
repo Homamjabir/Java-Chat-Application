@@ -1,7 +1,5 @@
 /**
- * Author: Homam Jabir
- *
- * Description: The following class creates a new chat client object
+ * The following class creates a new chat client object
  * which handles sending both initials messages like asking for a
  * registraion or login and the latter stage of sending
  *
@@ -12,7 +10,6 @@ package server.lobbys;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 public class ChatClient implements Runnable {
 
@@ -26,7 +23,7 @@ public class ChatClient implements Runnable {
     public Socket socket;
 
     /**
-     * Constructor.
+     * Constructor
      */
     ChatClient(Socket socket, MessageHandler messageHandler) {
         this.socket = socket;
@@ -42,6 +39,9 @@ public class ChatClient implements Runnable {
         }
     }
 
+    /**
+     * Gets called when the thread starts and handles the data that it sent between the server and client
+     */
     public void run() {
         try {
             initialCommunication();
@@ -51,20 +51,6 @@ public class ChatClient implements Runnable {
         }
     }
 
-    private String[] getUserData() throws IOException
-    {
-        String[] arr = new String[2];
-        this.outdata.println("Enter username: ");
-        arr[0] = this.indata.readLine();
-        this.outdata.println("Enter password: ");
-        arr[1] = this.indata.readLine();
-        return arr;
-    }
-
-    /**
-     * Handles the initial communication with the client such as login and entering display name
-     * @throws IOException
-     */
     private void initialCommunication() throws IOException
     {
         String response;
@@ -98,20 +84,26 @@ public class ChatClient implements Runnable {
         this.outdata.println("To get a list of the available commands, please write \"-h\"");
     }
 
-    /**
-     * Handles communication after the client has logged in
-     * @throws IOException
-     */
-    private void messageCommunication() throws IOException
-    {
+
+    private void messageCommunication() throws IOException {
         String message;
 
         while (true) {
             message = this.indata.readLine();
-
             messageHandler.sendMessage(this, message);
         }
     }
+
+    private String[] getUserData() throws IOException
+    {
+        String[] arr = new String[2];
+        this.outdata.println("Enter username: ");
+        arr[0] = this.indata.readLine();
+        this.outdata.println("Enter password: ");
+        arr[1] = this.indata.readLine();
+        return arr;
+    }
+
 
     public void setInLobby(Boolean inLobby) {
         this.inLobby = inLobby;
@@ -120,6 +112,7 @@ public class ChatClient implements Runnable {
     boolean getInLobby() {
         return this.inLobby;
     }
+
 
     String getUsername() {
         return this.username;
@@ -145,14 +138,17 @@ public class ChatClient implements Runnable {
         this.outdata.println(message);
     }
 
-    void sendFile(String fileContent) throws IOException
-    {
+    /**
+     * Converts a string to bytes and sends it to the client
+     * @param fileContent File content that is sent.
+     * @throws IOException
+     */
+    void sendFile(String fileContent) throws IOException {
         byte[] fileContentBytes = fileContent.getBytes(StandardCharsets.UTF_8);
-        sendMessage("-f " + fileContentBytes.length);
+        sendMessage("-f123123 " + fileContentBytes.length);
         OutputStream outputStream = this.socket.getOutputStream();
         outputStream.write(fileContentBytes, 0, fileContentBytes.length);
         outputStream.flush();
-        outputStream.close();
     }
 
 

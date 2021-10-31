@@ -1,10 +1,11 @@
+/**
+ * The class handles messages that the client sends
+ */
+
 package server.lobbys;
 
 import server.commands.CommandHandler;
 import server.commands.Commands;
-import server.lobbys.ChatClient;
-import server.lobbys.ClientData;
-import server.lobbys.Lobby;
 
 import java.io.IOException;
 
@@ -15,6 +16,11 @@ public class MessageHandler
     private final CommandHandler commandHandler;
     private final ClientData clientData;
 
+    /**
+     * Constructor
+     * @param lobby
+     * @param clientData
+     */
     MessageHandler(Lobby lobby, ClientData clientData) {
         this.clientData = clientData;
         this.lobby = lobby;
@@ -22,6 +28,13 @@ public class MessageHandler
         this.commandHandler = new CommandHandler(lobby, clientData);
     }
 
+    /**
+     * Checks if client can register
+     * @param chatClient Client to log in
+     * @param username
+     * @param password
+     * @return
+     */
     String registerRequest(ChatClient chatClient, String username, String password) {
         if(!clientData.usernameExist(username)) {
             clientData.addLoginCredentials(chatClient, username, password);
@@ -31,6 +44,13 @@ public class MessageHandler
 
     }
 
+    /**
+     * Checks if client is able to log in
+     * @param chatClient Client to log in
+     * @param username
+     * @param password
+     * @return
+     */
     String loginRequest(ChatClient chatClient, String username, String password) {
         if(clientData.isValidLoginCredential(chatClient, username, password)) {
             return "You have successfully logged in";
@@ -39,6 +59,12 @@ public class MessageHandler
         }
     }
 
+    /**
+     * Sends message to distribution function
+     * @param chatClient Client that sent message
+     * @param message Message
+     * @throws IOException
+     */
     void sendMessage(ChatClient chatClient, String message) throws IOException {
 
         String response;
@@ -47,6 +73,7 @@ public class MessageHandler
             response = commandHandler.commandExecution(message, chatClient);
             if(response.split(" ")[0].equals("-f"))
             {
+
                 StringBuilder sb = new StringBuilder();
                 String[] test = response.split(" ");
                 for(String s : test) {
@@ -66,9 +93,17 @@ public class MessageHandler
         }
     }
 
+    /**
+     * Sends file content to distribution function
+     * @param chatClient Client that sent the file
+     * @param fileContent File contents
+     * @throws IOException
+     */
     void sendFile(ChatClient chatClient, String fileContent) throws IOException
     {
+
         if(chatClient.getInLobby()) {
+
             this.lobby.distributeFile(chatClient, fileContent);
         } else {
             chatClient.outdata.println("Please join or create a lobby before sending a file!");

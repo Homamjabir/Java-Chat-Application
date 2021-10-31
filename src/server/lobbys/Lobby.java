@@ -1,3 +1,8 @@
+/**
+ * The following class handles all clients connected to the server, the chatroom's,
+ * and the communication between the clients
+ */
+
 package server.lobbys;
 
 import javax.net.ssl.SSLSocket;
@@ -10,6 +15,7 @@ public class Lobby
     private final MessageHandler messageHandler;
     private final ArrayList<ChatRoom> chatRooms;
     private final ArrayList<ChatClient> chatClients;
+    private final ArrayList<Thread> threads;
 
     /**
      * Constructor
@@ -19,6 +25,7 @@ public class Lobby
         this.messageHandler = new MessageHandler(this, clientData);
         this.chatClients = new ArrayList<>();
         this.chatRooms = new ArrayList<>();
+        this.threads = new ArrayList<>();
     }
 
     /**
@@ -91,7 +98,9 @@ public class Lobby
      */
     public void removeFromChatRoom(ChatClient chatClient) {
         if(chatClient.getInLobby())
+        {
             chatClient.getChatRoom().removeFromRoom(chatClient);
+        }
     }
 
     /**
@@ -105,13 +114,17 @@ public class Lobby
                 clients.sendMessage(msg);
     }
 
-    void distributeFile(ChatClient client, String fileContent) throws IOException
-    {
+    /**
+     * Sens a file contents to every chat that is in the specified clients chatroom
+     * @param client
+     * @param fileContent
+     * @throws IOException
+     */
+    void distributeFile(ChatClient client, String fileContent) throws IOException {
         for(ChatClient clients : client.getChatRoom().getChatRoomClientsList()) {
             if(!clients.equals(client))
                 clients.sendFile(fileContent);
         }
-
     }
 
     /**
@@ -121,15 +134,9 @@ public class Lobby
     public void addClient(SSLSocket sslSocket) {
         ChatClient chatClient = new ChatClient(sslSocket, this.messageHandler);
         Thread thread = new Thread(chatClient);
+        this.threads.add(thread);
         thread.start();
         this.chatClients.add(chatClient);
         System.out.println("Number of connected users: " + this.chatClients.size());
-
     }
-
-
-
-
-
-
 }

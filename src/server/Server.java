@@ -1,10 +1,8 @@
-package server;
-
-/*
- * Created by: Homam Jabir
- *
+/**
  * The following class creates a server and handles all incoming connections.
  */
+
+package server;
 
 import server.lobbys.Lobby;
 
@@ -19,7 +17,14 @@ public class Server {
     private final Lobby lobby;
 
     /**
-     * Constructor.
+     * Creates a encrypted socket for communication with the clients
+     * @throws IOException
+     * @throws NoSuchProviderException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
      */
     Server() throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
         char[] password = "rootroot".toCharArray();
@@ -38,9 +43,6 @@ public class Server {
         this.socketFactory = context.getServerSocketFactory();
     }
 
-    /**
-     * Creates a server that handles all the incoming connections and adding them to a client list.
-     */
     private void createServer() {
         SSLServerSocket sslServerSocket;
         SSLSocket sslSocket;

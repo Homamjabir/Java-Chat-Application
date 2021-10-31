@@ -1,11 +1,10 @@
-package client;
-
 /**
- * Created by: Homam Jabir
  *
  * The following class handles incoming and outgoing messages for the client
  * through two threads.
  */
+
+package client;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -20,6 +19,14 @@ public class Client {
 
     private final SSLSocket sslSocket;
 
+    /**
+     * Creates a encrypted socket for communication with the server
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
+     */
     private Client() throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, KeyManagementException
     {
         String hostName = "localhost";
@@ -44,14 +51,10 @@ public class Client {
         this.sslSocket = (SSLSocket) socketFactory.createSocket(hostName, portNumber);
     }
 
-    /**
-     * Creates the client socket and two threads,
-     * one for sending and one for receiving messages.
-     */
     private void createClient() throws IOException
     {
 
-        Thread sender = new Thread(new Sender(sslSocket));
+        Thread sender = new Thread(new Sender(this, sslSocket));
         Thread receiver = new Thread(new Receiver(sslSocket));
         sender.start();
         receiver.start();
